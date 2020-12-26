@@ -117,7 +117,7 @@ jobs:
     # Test strategies
     strategy:
       matrix:
-        test: ['default-clean', 'default-same']
+        test: ['default-clean', 'default-same', 'iptables']
         include:
           - test: 'default-clean'
             mode: default
@@ -129,7 +129,11 @@ jobs:
             test-script: run-tests.sh
             relaunch-polycubed: false
             test-mode: SameInstance
-
+          - test: 'iptables'
+            mode: iptables
+            test-script: run-tests-iptables.sh
+            relaunch-polycubed: false
+            test-mode: Iptables
     steps:
       - uses: actions/checkout@v2
         with:
@@ -183,6 +187,13 @@ jobs:
           export TEST_RESULTS=`ls -1 test_results_*`
           python3 ./converter/to_junit.py ${{ matrix.test-mode }}
 
+      - name: Publish Test Report
+        uses: mikepenz/action-junit-report@v1
+        with:
+          report_paths: ./tests/${{ matrix.test }}.xml
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          check_name: Test Results (${{ matrix.test }})
+
       - name: Upload Test Results
         if: always()
         uses: actions/upload-artifact@v2
@@ -192,26 +203,3 @@ jobs:
           
       - name: Clean
         run: ./CI/clean_slave.sh
-
-  publish-test-results:
-      name: Publish Results
-      needs: [test]
-      runs-on: ubuntu-latest
-      if: always()
-      steps:
-        - uses: actions/checkout@v2
-          with:
-            submodules: true
-            persist-credentials: false
-
-        - name: Download Artifacts
-          uses: actions/download-artifact@v2
-          with:
-            path: artifacts
-
-        - name: Publish Unit Test Results
-          uses: EnricoMi/publish-unit-test-result-action@v1.6
-          with:
-            check_name: Unit Test Results
-            github_token: ${{ secrets.GITHUB_TOKEN }}
-            files: '**/output*.xml'
