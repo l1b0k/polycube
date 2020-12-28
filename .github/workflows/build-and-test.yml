@@ -177,12 +177,7 @@ jobs:
           $polycubed /bin/sleep infinity
           ./CI/extract_from_docker_image.sh ${{ env.app-container }}
           $KILL_COMMAND
-        
-      - name: Run Docker
-        run: |
-          $polycubed
-          docker ps
-        
+
       - name: Run Tests
         run: |
           cd tests/
