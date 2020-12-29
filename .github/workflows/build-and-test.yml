@@ -153,7 +153,9 @@ jobs:
       - name: Setup JUnitParser
         run: python3 -m pip install --user junitparser
 
-      - name: Setup NMap
+      # Install additional tools that are required in the testing phase
+      # - nmap: some tests use 'nping', which is included in this package
+      - name: Setup additional testing tools
         run: |
           sudo apt-get update
           sudo apt-get install nmap
