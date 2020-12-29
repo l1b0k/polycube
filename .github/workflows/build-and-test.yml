@@ -155,8 +155,8 @@ jobs:
 
       - name: Setup NMap
         run: |
-          apt update
-          apt install nmap
+          sudo apt-get update
+          sudo apt-get install nmap
 
       - name: Docker login to GitHub registry
         uses: docker/login-action@v1
