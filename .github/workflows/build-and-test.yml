@@ -153,6 +153,11 @@ jobs:
       - name: Setup JUnitParser
         run: python3 -m pip install --user junitparser
 
+      - name: Setup NMap
+        run: |
+          apt update
+          apt install nmap
+
       - name: Docker login to GitHub registry
         uses: docker/login-action@v1
         with:
